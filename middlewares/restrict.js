@@ -65,6 +65,7 @@ module.exports = {
         const user = await prisma.user.findUnique({
           where: { id: decoded.id },
           select : {
+            id : true,
             name : true,
             email : true,
             nim : true,
