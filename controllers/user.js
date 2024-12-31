@@ -47,6 +47,8 @@ class UserController {
   static async uploadDocuments(req, res) {
     try {
       const userId = req.user.id;
+
+      const { dropMatakuliah, jumlahMatakuliah } = req.body;
       
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ error: 'No files uploaded' });
@@ -58,7 +60,16 @@ class UserController {
     if ( !req.files.transkripNilai) {
         throw new Error ("Transkrip Nilai wajib diisi")
     }
-      const uploadedFiles = {};
+    
+    if (!dropMatakuliah) {
+        throw new Error ("Drop Matakuliah wajib diisi")
+    }
+
+    if (!jumlahMatakuliah) {
+        throw new Error ("Jumlah Matakuliah wajib diisi")
+    }
+
+    const uploadedFiles = {};
 
       // Handle transcript upload
       if (req.files.transkripNilai) {
@@ -94,19 +105,20 @@ class UserController {
         uploadedFiles.cv = cvUpload.url;
       }
 
-      // Update document in database
       const document = await prisma.dokumen.upsert({
         where: { userId },
         create: {
           userId,
-          transkripNilai: uploadedFiles.transkripNilai || '',
-          cv: uploadedFiles.cv || '',
-          dropMatakuliah: '',
-          jumlahMatakuliah: ''
+          transkripNilai: uploadedFiles.transkripNilai,
+          cv: uploadedFiles.cv,
+          dropMatakuliah: dropMatakuliah,
+          jumlahMatakuliah: jumlahMatakuliah
         },
         update: {
           ...(uploadedFiles.transkripNilai && { transkripNilai: uploadedFiles.transkripNilai }),
-          ...(uploadedFiles.cv && { cv: uploadedFiles.cv })
+          ...(uploadedFiles.cv && { cv: uploadedFiles.cv }),
+          ...(dropMatakuliah && { dropMatakuliah: dropMatakuliah }),
+          ...(jumlahMatakuliah && { jumlahMatakuliah: jumlahMatakuliah })
         }
       });
 
