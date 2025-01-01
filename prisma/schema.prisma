@@ -24,6 +24,8 @@ model User {
   dokumen Dokumen[]
   logbook Logbook[]
   detailLogbook DetailLogbook[]
+  topik Topik[]
+  topikDetail TopikDetail[]
 }
 
 model Dokumen {
@@ -57,5 +59,28 @@ model DetailLogbook {
   rincianKegiatan String
   buktiKegiatan String
   logbook Logbook @relation(fields: [logbookId], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Topik {
+  id        String   @id @default(cuid())
+  nama      String
+  deskripsi String
+  userId   String
+  user User @relation(fields: [userId], references: [id])
+  topikDetail TopikDetail[]
+}
+
+model TopikDetail {
+  id        String   @id @default(cuid())
+  topikId   String
+  nama      String
+  nim       String
+  prodi     String
+  role1    String
+  role2    String
+  noHp     String
+  user_id   String
+  topik Topik @relation(fields: [topikId], references: [id])
   user User @relation(fields: [user_id], references: [id])
 }
