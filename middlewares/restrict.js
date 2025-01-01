@@ -6,90 +6,79 @@ const prisma = new PrismaClient();
 const { JWT_SECRET } = process.env;
 
 module.exports = {
-    mahasiswa: (req, res, next) => {
+    mahasiswa: async (req, res, next) => {
         try {
             AuthValidation.headers(req.headers);
 
             const token = req.headers.authorization.split(' ')[1];
-            jwt.verify(token, JWT_SECRET, (err, decoded) => {
-                if (err) {
-                    throw new HttpRequestError('Token tidak valid atau telah kedaluwarsa. Silakan login kembali untuk mendapatkan token baru.', 401);
-                }
+            const decoded = jwt.verify(token, JWT_SECRET);
 
-                if (!(decoded.role === 'mahasiswa')) {
-                    throw new HttpRequestError('Akses ditolak. Anda tidak memiliki izin untuk mengakses endpoint ini.', 403);
-                }
+            if (decoded.role !== 'mahasiswa') {
+                throw new HttpRequestError('Akses ditolak. Anda tidak memiliki izin untuk mengakses endpoint ini.', 403);
+            }
 
-                req.user = decoded;
-                next();
-            });
+            req.user = decoded;
+            next();
         } catch (err) {
-            next(err);
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Token tidak valid atau telah kedaluwarsa.',
+            });
         }
     },
-    dosen: (req, res, next) => {
+    dosen: async (req, res, next) => {
         try {
             AuthValidation.headers(req.headers);
 
             const token = req.headers.authorization.split(' ')[1];
-            jwt.verify(token, JWT_SECRET, (err, decoded) => {
-                if (err) {
-                    throw new HttpRequestError('Token tidak valid atau telah kedaluwarsa. Silakan login kembali untuk mendapatkan token baru.', 401);
-                }
+            const decoded = jwt.verify(token, JWT_SECRET);
 
-                if (!(decoded.role === 'dosen')) {
-                    throw new HttpRequestError('Akses ditolak. Anda tidak memiliki izin untuk mengakses endpoint ini.', 403);
-                }
+            if (decoded.role !== 'dosen') {
+                throw new HttpRequestError('Akses ditolak. Anda tidak memiliki izin untuk mengakses endpoint ini.', 403);
+            }
 
-                req.user = decoded;
-                next();
-            });
+            req.user = decoded;
+            next();
         } catch (err) {
-            next(err);
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Token tidak valid atau telah kedaluwarsa.',
+            });
         }
     },
-    userParams :async (req,res,next) => {
-      try {
-        const token = req.headers.authorization?.split(' ')[1]; // Mendapatkan token dari header Authorization
-    
-        if (!token) {
-          return res.status(401).json({
-            status: 'Failed',
-            statusCode: 401,
-            message: 'Token tidak ditemukan. Silakan login terlebih dahulu.',
-          });
+    userParams: async (req, res, next) => {
+        try {
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                throw new HttpRequestError('Token tidak ditemukan. Silakan login terlebih dahulu.', 401);
+            }
+
+            const decoded = jwt.verify(token, JWT_SECRET);
+            const user = await prisma.user.findUnique({
+                where: { id: decoded.id },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    nim: true,
+                    noHp: true,
+                },
+            });
+
+            if (!user) {
+                throw new HttpRequestError('User tidak ditemukan.', 404);
+            }
+
+            req.user = user;
+            next();
+        } catch (err) {
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Token tidak valid atau telah kedaluwarsa.',
+            });
         }
-    
-        // Verifikasi token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await prisma.user.findUnique({
-          where: { id: decoded.id },
-          select : {
-            id : true,
-            name : true,
-            email : true,
-            nim : true,
-            noHp : true,
-          }
-        });
-    
-        if (!user) {
-          return res.status(404).json({
-            status: 'Failed',
-            statusCode: 404,
-            message: 'User tidak ditemukan.',
-          });
-        }
-    
-        req.user = user; // Tambahkan data user ke req
-        next();
-      } catch (err) {
-        console.error('Auth Middleware Error:', err);
-        return res.status(401).json({
-          status: 'Failed',
-          statusCode: 401,
-          message: 'Token tidak valid atau telah kedaluwarsa.',
-        });
-      }
-    }
+    },
 };

@@ -3,9 +3,9 @@ const prisma = new PrismaClient();
 const HttpRequestError = require('../utils/error');
 
 class User {
-    static async profile (email){
+    static async profile (id){
         const user = await prisma.user.findUnique({
-            where: { email: email },
+            where: { id: id },
         select : {
             name: true,
             email: true,

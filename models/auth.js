@@ -5,16 +5,8 @@ const bcrypt = require('bcrypt');
 const HttpRequestError = require('../utils/error');
 
 class Auth {
-    static async register({ name, email, password, nim, noHp }) {
+    static async register({ name, email, password, nim, noHp, role }) {
         try {
-            console.log('Registration data:', {
-                name,
-                email,
-                nim,
-                noHp,
-                passwordLength: password?.length
-            });
-
             // Check for unique constraints before attempting to create
             const existingNim = await prisma.user.findUnique({
                 where: { nim: String(nim) }
@@ -39,9 +31,9 @@ class Auth {
                     name: String(name),
                     email: String(email),
                     password: hashedPassword,
-                    role: "mahasiswa",
                     nim: String(nim),
                     noHp: String(noHp),
+                    role: role || 'mahasiswa'
                 }
             });
 

@@ -22,6 +22,8 @@ model User {
   nim       String   @unique
   noHp      String
   dokumen Dokumen[]
+  logbook Logbook[]
+  detailLogbook DetailLogbook[]
 }
 
 model Dokumen {
@@ -34,3 +36,26 @@ model Dokumen {
   user User @relation(fields: [userId], references: [id])
 }
 
+model Logbook {
+  id        String   @id @default(cuid())
+  userId  String
+  progress String
+  nama String?
+  user User @relation(fields: [userId], references: [id])
+  detailLogbook DetailLogbook[]
+}
+
+model DetailLogbook {
+  id        String   @id @default(cuid())
+  user_id  String
+  logbookId  String
+  namaDosen String
+  target String
+  kendala String
+  tanggal String
+  output String
+  rincianKegiatan String
+  buktiKegiatan String
+  logbook Logbook @relation(fields: [logbookId], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+}

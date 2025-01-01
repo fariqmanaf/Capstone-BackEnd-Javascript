@@ -18,7 +18,8 @@ const uploadFields = upload.fields([
 ]);
 
 // Routes
-router.get('/profile', Auth.userParams, UserController.changePassword);
+router.post('/change-password', Auth.userParams, UserController.changePassword);
+router.get('/profile', Auth.userParams, UserController.getProfile);
 router.post('/upload-document', Auth.userParams, uploadFields, UserController.uploadDocuments);
 
 module.exports = router;

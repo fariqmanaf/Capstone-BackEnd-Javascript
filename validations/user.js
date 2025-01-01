@@ -15,4 +15,19 @@ module.exports = {
         if (!findUser){
             throw new HttpRequestError("Pengguna tidak ditemukan. Pastikan email benar.", 404);
         }
-}   }
+},
+getprofile2 : async (email) => {
+    const user = await prisma.user.findUnique({
+        where: { email: email },
+        select: {
+            name: true,
+            email: true,
+            nim: true,
+            noHp: true,
+        }
+    });
+    if (!user) {
+        throw new HttpRequestError("User tidak ditemukan.", 400);
+    }
+}
+}

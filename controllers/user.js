@@ -2,6 +2,10 @@
 const ImageKit = require('imagekit');
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
+const UserValidation = require('../validations/user');
+const UserModel = require('../models/user');
+const HttpRequestError = require("../utils/error");
+
 
 const prisma = new PrismaClient();
 const imagekit = new ImageKit({
@@ -14,7 +18,7 @@ class UserController {
   static async changePassword(req, res) {
     try {
       const userId = req.user.id;
-      const { oldPassword, newPassword } = req.body;
+      const { oldPassword, newPassword, confirmPassword } = req.body;
 
       const user = await prisma.user.findUnique({
         where: { id: userId }
@@ -25,9 +29,15 @@ class UserController {
       }
 
       const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+      console.log(isPasswordValid)
       if (!isPasswordValid) {
-        return res.status(400).json({ error: 'Current password is incorrect' });
+        throw new HttpRequestError('Password lama salah', 400);
       }
+      console.log(newPassword, confirmPassword)
+
+        if (newPassword !== confirmPassword) {
+            throw new HttpRequestError('Password baru dan konfirmasi password tidak sama', 400);
+        }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       await prisma.user.update({
@@ -35,12 +45,21 @@ class UserController {
         data: { password: hashedPassword }
       });
 
+      const data = await prisma.user.findUnique({
+        where: { id: userId }
+      });
+
       res.status(201).json({ 
         message: 'Password updated successfully',
-        data :data
-    });
+        status: 'success',
+        data : data
+
+        });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ 
+        status: 'Failed',
+        error: error.message 
+    });
     }
   }
 
@@ -143,6 +162,25 @@ class UserController {
       file.size <= maxSize
     );
   }
+
+  static async getProfile(req, res, next) {
+    try {
+        const user = req.user;
+
+        await UserValidation.getprofile2(user.email);
+        const data = await UserModel.profile(user.id)
+        res.status(200).json({
+            status: 'success',
+            data: data
+        });
+
+    }catch (error) {
+      res.status(500).json({ 
+        status: 'Failed',
+        error: error.message + "ini error"
+        });
+    }
+    }
 }
 
 module.exports = UserController;
