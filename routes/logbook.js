@@ -5,6 +5,7 @@ const logbook = require('../controllers/logbook');
 
 
 router.post('/make-logbook', Auth.dosen, logbook.makeLogbook);
+router.get('/logbook', Auth.allUser, logbook.getLogbook);
 
 
 module.exports = router;

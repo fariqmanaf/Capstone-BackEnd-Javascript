@@ -12,6 +12,7 @@ class Logbook {
             }
         });
 
+        console.log(logbook)
         return logbook
     }   
 }

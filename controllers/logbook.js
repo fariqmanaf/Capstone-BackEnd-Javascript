@@ -34,12 +34,12 @@ module.exports = {
     getLogbook: async (req, res, next) => {
         try {
             const userId = req.user.id;
-            const data = await Logbook.getLogbook(userId);
+            const data = await Logbook.allLogbook();
 
             return res.status(200).json({
                 status: 'Success',
                 message: 'Logbook berhasil diambil',
-                data
+                data : data
             });
 
         } catch (err) {
