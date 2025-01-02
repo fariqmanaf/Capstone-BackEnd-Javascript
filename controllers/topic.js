@@ -47,7 +47,7 @@ class TopicController {
   
     async deleteTopic(req, res) {
       try {
-        await Topic.deletetopic(req.params.id, req.user.id);
+        await TopicValidation.deletetopic(req.params.id, req.user.id);
         res.status(200).json({ message: 'topic deleted successfully' });
       } catch (error) {
         if (error.message === 'topic not found or unauthorized') {
@@ -59,7 +59,31 @@ class TopicController {
   
     async createTopikDetail(req, res) {
       try {
-        validateTopikDetail(req.body);
+        const { nama, nim, prodi, role1, role2, noHp } = req.body;
+                
+        if (!nama || typeof nama !== 'string') {
+            throw new HttpRequestError('Nama is required and must be a string');
+        }
+        
+        if (!nim || typeof nim !== 'string') {
+            throw new HttpRequestError('NIM is required and must be a string');
+        }
+        
+        if (!prodi || typeof prodi !== 'string') {
+            throw new HttpRequestError('Prodi is required and must be a string');
+        }
+        
+        if (!role1 || typeof role1 !== 'string') {
+            throw new HttpRequestError('Role1 is required and must be a string');
+        }
+        
+        if (!role2 || typeof role2 !== 'string') {
+            throw new HttpRequestError('Role2 is required and must be a string');
+        }
+        
+        if (!noHp || typeof noHp !== 'string') {
+            throw new HttpRequestError('No HP is required and must be a string');
+        }
         const topikDetail = await Topic.createTopikDetail(
           req.body,
           req.params.topikId,
