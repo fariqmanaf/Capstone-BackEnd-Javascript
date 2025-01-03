@@ -1,54 +1,153 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient(); 
-const Validation = require('../validations/logbook');
-const Logbook = require('../models/logbook');
+const ImageKit = require("imagekit");
+const Error = require("../utils/errorHandler");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const Validation = require("../validations/logbook");
+const Logbook = require("../models/logbook");
+
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
 
 module.exports = {
-    makeLogbook: async (req, res, next) => {
-        try {
-            const userId = req.user.id;
-            const { progress, nama } = req.body;
-            await Validation.makeLogbook( progress );
+  makeLogbook: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { progress, nama } = req.body;
+      await Validation.makeLogbook(progress);
 
-            const data = await prisma.logbook.create({
-                data: {
-                    progress,
-                    userId,
-                    nama
-                }
-            });
-            
-            return res.status(201).json({
-                status: 'Success',
-                message: 'Logbook berhasil dibuat',
-                data
-            });
+      const data = await prisma.logbook.create({
+        data: {
+          progress,
+          userId,
+          nama,
+        },
+      });
 
-        } catch (err) {
-            return res.status(500).json({
-                status: 'Failed',
-                message: err || err.message + " ini error"
-            });
-        }
-    },
-    getLogbook: async (req, res, next) => {
-        try {
-            const userId = req.user.id;
-            const data = await Logbook.allLogbook();
+      return res.status(201).json({
+        status: "Success",
+        message: "Logbook berhasil dibuat",
+        data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "Failed",
+        message: err || err.message + " ini error",
+      });
+    }
+  },
+  getLogbook: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const data = await Logbook.allLogbook();
 
-            return res.status(200).json({
-                status: 'Success',
-                message: 'Logbook berhasil diambil',
-                data : data
-            });
+      return res.status(200).json({
+        status: "Success",
+        message: "Logbook berhasil diambil",
+        data: data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "Failed",
+        message: err || err.message + " ini error",
+      });
+    }
+  },
+  makeLogbookDetail: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const logbookId = req.params.id;
+      const { namaDosen, target, kendala, tanggal, output, rincianKegiatan } = req.body;
 
-        } catch (err) {
-            return res.status(500).json({
-                status: 'Failed',
-                message: err || err.message + " ini error"
-            });
-        }
-    },
-}
+      if (!namaDosen) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Nama Dosen tidak boleh kosong",
+        });
+      }
+      if (!target) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Target tidak boleh kosong",
+        });
+      }
+      if (!kendala) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Kendala tidak boleh kosong",
+        });
+      }
+      if (!tanggal) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Tanggal tidak boleh kosong",
+        });
+      }
+      if (!output) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "Output tidak boleh kosong",
+        });
+      }
 
+      if (!rincianKegiatan){
+        return res.status(400).json({
+          status: "Failed",
+          message: "Rincian Kegiatan tidak boleh kosong",
+        });
+      }
 
+      const uploadImageKit = await imagekit.upload({
+        file: req.file.buffer.toString("base64"),
+        fileName: req.file.originalname,
+        folder: "logbook",
+      });
+
+      const logbookfile = uploadImageKit.url;
+      const data = await prisma.detailLogbook.create({
+        data: {
+          namaDosen: namaDosen,
+          target: target,
+          user_id: userId,
+          kendala: kendala,
+          tanggal: tanggal,
+          output: output,
+          buktiKegiatan: logbookfile,
+          rincianKegiatan : rincianKegiatan,
+          logbookId: logbookId,
+        },
+      });
+
+      return res.status(201).json({
+        status: "Success",
+        message: "Logbook Detail berhasil dibuat",
+        data: data,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        status: "Failed",
+        
+        message: err || err.message + " ini error di controller logbook",
+      });
+    }
+  },
+  getLogbookDetail: async (req, res, next) => {
+    try {
+      const data = await Logbook.allLogbookDetail();
+
+      return res.status(200).json({
+        status: "Success",
+        message: "Logbook Detail berhasil diambil",
+        data: data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "Failed",
+        message: err || err.message + " ini error",
+      });
+    }
+  },
+};
