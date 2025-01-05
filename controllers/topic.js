@@ -1,8 +1,5 @@
 const HttpRequestError = require("../utils/error");
 const Topic = require('../models/topic');
-const TopicValidation = require('../validations/topic');
-
-
 class TopicController {
     async createTopic(req, res) {
       try {
@@ -15,12 +12,14 @@ class TopicController {
             throw new HttpRequestError('Deskripsi is required and must be a string');
           }
         const topic = await Topic.createtopic(req.body, req.user.id);
+        console.log(topic);
         res.status(201).json(topic);
       } catch (error) {
-        if (error instanceof HttpRequestError) {
-          return res.status(400).json({ message: error.message });
-        }
-        res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+        res.status(500).json({ 
+          status : 'Failed',
+          message: 'Internal server error' 
+        });
       }
     }
 
@@ -47,7 +46,7 @@ class TopicController {
   
     async deleteTopic(req, res) {
       try {
-        await TopicValidation.deletetopic(req.params.id, req.user.id);
+        await Topic.deleteTopic(req.params.id, req.user.id);
         res.status(200).json({ message: 'topic deleted successfully' });
       } catch (error) {
         if (error.message === 'topic not found or unauthorized') {
@@ -92,10 +91,79 @@ class TopicController {
         res.status(201).json(topikDetail);
       } catch (error) {
         if (error instanceof HttpRequestError) {
-          return res.status(400).json({ message: error.message });
+          return res.status(400).json({ message: error });
         }
         res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
       }
     }
+
+    async getRole(req, res) {
+      try {
+        const roles = await Topic.getRole(req.params.id);
+        res.status(200).json(roles);
+      } catch (error) {
+        res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+      }
+    }
+    async getPendaftarTopic(req, res) {
+      try{
+        const pendaftar = await Topic.getPendaftarTopic();
+
+        res.status(200).json({
+          status: 'Success',
+          message: 'Pendaftar topic berhasil diambil',
+          data: pendaftar
+        });
+
+        res.status(200).json({ message: 'coba' });
+      }catch(error){
+        res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+      }
   }
+  async getPendaftarTopicAcc(req, res) {
+    try{
+      const pendaftar = await Topic.getPendaftarTopicAcc();
+
+      res.status(200).json({
+        status: 'Success',
+        message: 'Pendaftar topic berhasil diambil',
+        data: pendaftar
+      });
+
+
+    }catch(error){
+      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+    }
+  }
+  async updatePendaftarTopic(req, res) {
+    try{
+      const pendaftar = await Topic.updatePendaftarTopic(req.params.id);
+
+      res.status(201).json({
+        status: 'Success',
+        message: 'Pendaftar topic berhasil diupdate',
+        data: pendaftar
+      });
+    }catch(error){
+      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+    }
+  }
+  async deletePendaftarTopic(req, res) {
+    try{
+
+      const pendaftar = await Topic.deletePendaftarTopic(req.params.id);
+      res.status(200).json({ 
+        status: 'Success',
+        message: 'Pendaftar topic berhasil dihapus'
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+    }
+}
 module.exports = new TopicController();
