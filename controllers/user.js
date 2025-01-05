@@ -68,6 +68,9 @@ class UserController {
       const userId = req.user.id;
 
       const { dropMatakuliah, jumlahMatakuliah } = req.body;
+
+      console.log(dropMatakuliah, jumlahMatakuliah);
+      console.log(req.body);
       
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ error: 'No files uploaded' });

@@ -165,5 +165,6 @@ class TopicController {
       res.status(500).json({ message: 'Internal server error' });
       console.log(error);
     }
+  }
 }
 module.exports = new TopicController();
