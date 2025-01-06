@@ -166,5 +166,54 @@ class TopicController {
       console.log(error);
     }
   }
+  async getPendaftarTopicFilter(req, res) {
+    try{
+      const {nama} = req.query;
+      if (nama === ""){
+        const pendaftar = await Topic.getPendaftarTopic();
+
+        res.status(200).json({
+          status: 'Success',
+          message: 'Pendaftar topic berhasil diambil',
+          data: pendaftar
+        });
+      }
+      const data = await Topic.getPendaftarTopicFilter(nama);
+      res.status(200).json({
+        status: 'Success',
+        message: 'Pendaftar topic berhasil diambil',
+        data: data
+      });
+
+    }catch(error){
+    res.status(500).json({
+      status: 'Failed',
+      message: error });
+    }
+  }
+  async getPendaftarTopicAccFilter(req, res) {
+    try{
+      const {nama} = req.query;
+      if (nama === ""){
+        const pendaftar = await Topic.getPendaftarTopicAcc();
+
+        res.status(200).json({
+          status: 'Success',
+          message: 'Pendaftar topic berhasil diambil',
+          data: pendaftar
+        });
+      }
+      const data = await Topic.getPendaftarTopicAccFilter(nama);
+      res.status(200).json({
+        status: 'Success',
+        message: 'Pendaftar topic berhasil diambil',
+        data: data
+      });
+    }catch(error){
+      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+    }
+  }
 }
+
 module.exports = new TopicController();

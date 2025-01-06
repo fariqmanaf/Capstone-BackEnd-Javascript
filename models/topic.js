@@ -105,6 +105,38 @@ class TopicService {
       where: { id }
     });
   }
+
+  async getPendaftarTopicFilter(data) {
+    const inidatanya = await prisma.topikDetail.findMany({
+      where: {
+        nama : data
+      }
+    });
+
+    if (!inidatanya) {
+      return res.status(400).json({
+        status: "failed",
+        message: "nama tidak ditemukan"
+      })
+    }
+    return inidatanya;
+  }
+  async getPendaftarTopicAccFilter(data) {
+    const inidatanya = await prisma.topikDetail.findMany({
+      where: {
+        nama : data,
+        konfirmasi : "sudah"
+      }
+    });
+
+    if (!inidatanya) {
+      return res.status(400).json({
+        status: "failed",
+        message: "nama tidak ditemukan"
+      })
+    }
+    return inidatanya;
+  }
 }
 
 module.exports = new TopicService();

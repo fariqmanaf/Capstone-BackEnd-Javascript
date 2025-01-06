@@ -21,5 +21,6 @@ const uploadFields = upload.fields([
 router.post('/change-password', Auth.userParams, UserController.changePassword);
 router.get('/profile', Auth.userParams, UserController.getProfile);
 router.post('/upload-document', Auth.userParams, uploadFields, UserController.uploadDocuments);
+router.get('/document/:id', Auth.dosen, UserController.getDocument);
 
 module.exports = router;
