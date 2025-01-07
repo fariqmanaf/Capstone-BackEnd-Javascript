@@ -56,7 +56,6 @@ class TopicService {
   }
 
   async createTopikDetail(data, topikId, userId) {
-    console.log(data, topikId, userId);
     return await prisma.topikDetail.create({
       data: {
         ...data,
@@ -150,6 +149,7 @@ class TopicService {
     }
     return inidatanya;
   }
+
 }
 
 module.exports = new TopicService();
