@@ -19,7 +19,20 @@ class TopicService {
 
 
   async getAllTopic() {
-    return await prisma.topik.findMany();
+    return await prisma.topik.findMany({
+      include: {
+        role: {
+          select: {
+            nama: true
+          }
+        },
+        user : {
+          select : {
+            name : true
+          }
+        }
+      }
+    });
   }
 
   async getTopicById(id) {
