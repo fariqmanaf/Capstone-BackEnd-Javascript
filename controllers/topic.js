@@ -1,5 +1,6 @@
 const HttpRequestError = require("../utils/error");
 const Topic = require('../models/topic');
+const middlewares = require('../middlewares/restrict');
 class TopicController {
     async createTopic(req, res) {
       try {
@@ -83,6 +84,9 @@ class TopicController {
         if (!noHp || typeof noHp !== 'string') {
             throw new HttpRequestError('No HP is required and must be a string');
         }
+
+        // await Topic.midlewareTopicDetail(req.params.topikId, res);
+
         const topikDetail = await Topic.createTopikDetail(
           req.body,
           req.params.topikId,
@@ -91,7 +95,11 @@ class TopicController {
         res.status(201).json(topikDetail);
       } catch (error) {
         if (error instanceof HttpRequestError) {
-          return res.status(400).json({ message: error });
+          console.log(error);
+          return res.status(400).json({ 
+            message: error && error.message
+          });
+          
         }
         res.status(500).json({ message: 'Internal server error' });
         console.log(error);

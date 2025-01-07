@@ -59,6 +59,7 @@ module.exports = {
     try {
       const userId = req.user.id;
       const logbookId = req.params.id;
+      await Logbook.midllewareCreate(logbookId, res);
       const { namaDosen, target, kendala, tanggal, output, rincianKegiatan } = req.body;
 
       if (!namaDosen) {
