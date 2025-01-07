@@ -18,8 +18,8 @@ class TopicController {
         console.log(error);
         res.status(500).json({ 
           status : 'Failed',
-          message: 'Internal server error' 
-        });
+          message: error.message 
+        }); 
       }
     }
 
