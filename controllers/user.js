@@ -68,6 +68,9 @@ class UserController {
       const userId = req.user.id;
 
       const { dropMatakuliah, jumlahMatakuliah } = req.body;
+
+      console.log(dropMatakuliah, jumlahMatakuliah);
+      console.log(req.body);
       
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ error: 'No files uploaded' });
@@ -181,6 +184,31 @@ class UserController {
         });
     }
     }
+
+  static async getDocument(req, res) {
+    try {
+      console.log(req.params);
+      const userId = req.params.id;
+      const document = await prisma.dokumen.findUnique({
+        where: { userId }
+      });
+
+
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      res.status(200).json({ 
+        status: 'success',
+        data: document
+    });
+    } catch (error) {
+      res.status(500).json({ 
+        status: 'Failed',
+        error: error.message 
+    });
+    }
+  }
 }
 
 module.exports = UserController;

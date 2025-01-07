@@ -150,4 +150,26 @@ module.exports = {
       });
     }
   },
+  getLogbookDetailById: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const data = await prisma.detailLogbook.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      return res.status(200).json({
+        status: "Success",
+        message: "Logbook Detail berhasil diambil",
+        data: data,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: "Failed",
+        message: err || err.message + " ini error",
+      });
+    }
+  },
+  
 };

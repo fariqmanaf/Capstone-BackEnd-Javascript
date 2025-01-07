@@ -47,6 +47,7 @@ model Logbook {
   detailLogbook DetailLogbook[]
 }
 
+
 model DetailLogbook {
   id        String   @id @default(cuid())
   user_id  String
@@ -69,6 +70,14 @@ model Topik {
   userId   String
   user User @relation(fields: [userId], references: [id])
   topikDetail TopikDetail[]
+  role Role[]
+}
+
+model Role{
+  id        String   @id @default(cuid())
+  topikId   String
+  nama      String
+  topik Topik @relation(fields: [topikId], references: [id])
 }
 
 model TopikDetail {
@@ -83,4 +92,5 @@ model TopikDetail {
   user_id   String
   topik Topik @relation(fields: [topikId], references: [id])
   user User @relation(fields: [user_id], references: [id])
+  konfirmasi String @default("belum")
 }

@@ -65,7 +65,7 @@ module.exports = {
       return res.status(201).json({
         status: "Success",
         statusCode: 201,
-        message: "Registrasi berhasil. Silakan verifikasi akun Anda melalui kode OTP yang telah dikirimkan ke email Anda.",
+        message: "Registrasi berhasil",
         data: {
           user: {
             id: data.id,
