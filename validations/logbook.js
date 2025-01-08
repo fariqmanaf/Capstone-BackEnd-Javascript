@@ -3,26 +3,30 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = {
-    makeLogbook : async (progress) => {
+    makeLogbook: async (progress) => {
+        if (!progress) {
+          return {
+            success: false,
+            message: "Progress tidak boleh kosong",
+          };
+        }
+    
         const findlogbook = await prisma.logbook.findFirst({
-            where : {
-                progress : progress
-            }
+          where: {
+            progress: progress,
+          },
         });
-
-
-        if (findlogbook){
-            res.status(400).json({
-                status : "Failed",
-                message : "Progress sudah ada",
-            });
+    
+        if (findlogbook) {
+          return {
+            success: false,
+            message: "Progress sudah ada",
+          };
         }
-        if (!progress){
-            res.status(400).json({
-                status : "Failed",
-                message : "Progress tidak boleh kosong",
-            });
-        }
-        
-    }
+    
+        // Jika validasi berhasil
+        return {
+          success: true,
+        };
+    },
 }

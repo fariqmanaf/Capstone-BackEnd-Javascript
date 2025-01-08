@@ -97,6 +97,7 @@ class TopicController {
         if (error instanceof HttpRequestError) {
           console.log(error);
           return res.status(400).json({ 
+            status : 'Failed',
             message: error && error.message
           });
           
