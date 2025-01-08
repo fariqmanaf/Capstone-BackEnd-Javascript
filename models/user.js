@@ -7,6 +7,7 @@ class User {
         const user = await prisma.user.findUnique({
             where: { id: id },
         select : {
+            id: true,
             name: true,
             email: true,
             nim: true,
