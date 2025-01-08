@@ -11,6 +11,7 @@ class User {
             email: true,
             nim: true,
             noHp: true,
+            role : true
         }
     });
 

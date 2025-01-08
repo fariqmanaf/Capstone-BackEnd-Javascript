@@ -41,7 +41,48 @@ class Logbook {
       throw new HttpRequestError("Internal Server Error", 500);
     }
   }
-  
+  static async midllewareCreate(data, res, ) {
+    try{
+      const logbook = await prisma.logbook.findUnique({
+        where : {
+          id : data
+        }, select : {
+          progress : true
+        }
+      })
+      const progressSekarang = Number(logbook.progress);
+      const progressKemarin = progressSekarang - 1;
+      const progressKemarinString = progressKemarin.toString();
+      console.log(progressKemarinString);
+      const logbookId = await prisma.logbook.findFirst({
+        where : {
+          progress : progressKemarinString
+        }, select : {
+          id : true
+        }
+      })
+
+      const logbookKemarin = await prisma.detailLogbook.findFirst({
+        where :{
+          logbookId : logbookId.id
+        }
+      })
+
+      if (logbookKemarin === null){
+        return {
+          success: false,
+          message: `Logbook progress ${progressKemarin} belum di buat`,
+        }
+      }
+    }catch(err){
+      console.log(err);
+      return {
+        success: false,
+        message: err,
+      }
+    }
+  }
+
 }
 
 module.exports = Logbook;

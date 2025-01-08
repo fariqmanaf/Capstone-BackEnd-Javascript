@@ -4,6 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const Validation = require("../validations/logbook");
 const Logbook = require("../models/logbook");
+const { response } = require("express");
 
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -16,7 +17,13 @@ module.exports = {
     try {
       const userId = req.user.id;
       const { progress, nama } = req.body;
-      await Validation.makeLogbook(progress);
+      const validation = await Validation.makeLogbook(progress);
+      if (!validation.success) {
+        return res.status(400).json({
+          status: "Failed",
+          message: validation.message,
+        });
+      }
 
       const data = await prisma.logbook.create({
         data: {
@@ -32,6 +39,7 @@ module.exports = {
         data,
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         status: "Failed",
         message: err || err.message + " ini error",
@@ -59,7 +67,14 @@ module.exports = {
     try {
       const userId = req.user.id;
       const logbookId = req.params.id;
-      await Logbook.midllewareCreate(logbookId, res);
+      const midlleware = await Logbook.midllewareCreate(logbookId);
+      if (!midlleware.success) {
+        return res.status(400).json({
+          status: "Failed",
+          message: midlleware.message,
+        });
+      }
+
       const { namaDosen, target, kendala, tanggal, output, rincianKegiatan } = req.body;
 
       if (!namaDosen) {
