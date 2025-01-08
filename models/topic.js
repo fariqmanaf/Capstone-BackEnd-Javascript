@@ -70,11 +70,12 @@ class TopicService {
     });
 
     if (!topic) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "topic not found"
-      })
+      throw new Error('topic not found');
     }
+
+    await prisma.topikDetail.deleteMany({
+      where: { topikId: id }
+    });
 
     return await prisma.topik.delete({
       where: { id }
