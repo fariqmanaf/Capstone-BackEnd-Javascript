@@ -187,10 +187,19 @@ class UserController {
 
   static async getDocument(req, res) {
     try {
-      console.log(req.params);
       const userId = req.params.id;
       const document = await prisma.dokumen.findUnique({
-        where: { userId }
+        where: { userId },
+        include : {
+          user : {
+            select : {
+              name: true,
+              email: true,
+              nim: true,
+              noHp: true,
+            }
+          }
+        }
       });
 
 
