@@ -47,7 +47,7 @@ class TopicController {
   
     async deleteTopic(req, res) {
       try {
-        await Topic.deleteTopic(req.params.id, req.user.id);
+        const delet = await Topic.deleteTopic(req.params.id, req.user.id);
         res.status(200).json({ message: 'topic deleted successfully' });
       } catch (error) {
         if (error.message === 'topic not found or unauthorized') {
@@ -56,7 +56,7 @@ class TopicController {
         console.log(error);
         res.status(500).json({ 
           status : 'Failed',
-          message: error 
+          message: delet.message || error.message
         });
       }
     }
