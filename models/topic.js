@@ -37,7 +37,14 @@ class TopicService {
 
   async getTopicById(id) {
     return await prisma.topik.findFirst({
-      where: { id }
+      where: { id },
+      include : {
+        role: {
+          select: {
+            nama: true
+          }
+        },
+      }
     });
 }
 
