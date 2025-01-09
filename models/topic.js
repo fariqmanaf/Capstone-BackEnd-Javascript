@@ -172,23 +172,23 @@ class TopicService {
     }
 
     return await prisma.topik.update({
-      where: { id: id },
+      where: { id: topicId },
       data: {
-        nama: nama || topic.nama, // Gunakan nama baru jika diberikan
-        deskripsi: deskripsi || topic.deskripsi, // Gunakan deskripsi baru jika diberikan
+        nama: nama || topic.nama,
+        deskripsi: deskripsi || topic.deskripsi,
         role: roles
           ? {
               deleteMany: {}, // Hapus semua role lama
-              create: roles.map((roleName) => ({ nama: roleName })), // Tambah role baru
+              create: roles
+                .filter((roleName) => roleName && typeof roleName === 'string') // Filter role yang valid
+                .map((roleName) => ({ nama: roleName })), // Tambahkan role baru
             }
-          : undefined, // Jika roles tidak diberikan, biarkan tetap sama
+          : undefined,
       },
       include: {
         role: {
-          select: {
-            nama: true,
-          },
-        }, // Sertakan relasi roles dalam hasil
+          select: { nama: true }, // Sertakan hanya nama dari role
+        },
       },
     });
   }
