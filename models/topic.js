@@ -162,17 +162,16 @@ class TopicService {
   }
   async updateTopic(id, data, userId) {
     const topic = await prisma.topik.findFirst({
-      where: { id, userId },
+      where: { id },
     });
-
+  
     const { nama, deskripsi, roles } = data;
 
     if (!topic) {
       throw new Error("topic not found or unauthorized");
     }
-
     return await prisma.topik.update({
-      where: { id: topicId },
+      where: { id: topic.id },
       data: {
         nama: nama || topic.nama,
         deskripsi: deskripsi || topic.deskripsi,

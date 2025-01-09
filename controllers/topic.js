@@ -238,6 +238,7 @@ class TopicController {
         if (!deskripsi || typeof deskripsi !== 'string') {
           throw new HttpRequestError('Deskripsi is required and must be a string');
         }
+      
       const topic = await Topic.updateTopic(req.params.id, req.body, req.user.id);
       res.status(200).json(topic);
     } catch (error) {
