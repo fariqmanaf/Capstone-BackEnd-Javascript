@@ -8,6 +8,7 @@ router.get('/topic', Auth.allUser, TopicController.getAllTopic);
 router.get('/topic/:id', Auth.allUser, TopicController.getTopicById);
 router.delete('/delete-topic/:id', Auth.dosen, TopicController.deleteTopic);
 router.post('/create-topic/:topikId', Auth.mahasiswa, TopicController.createTopikDetail);
+router.patch('/update-topic/:id', Auth.dosen, TopicController.updateTopic);
 router.get('/pendaftar-topic', Auth.dosen, TopicController.getPendaftarTopic);
 router.get('/pendaftar-topic/filter', Auth.dosen, TopicController.getPendaftarTopicFilter);
 router.get('/pendaftar-topic-acc', Auth.dosen, TopicController.getPendaftarTopicAcc);

@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class TopicService {
@@ -13,52 +13,51 @@ class TopicService {
         role: {
           create: roles.map((roleName) => ({ nama: roleName })),
         },
-      }
+      },
     });
   }
-
 
   async getAllTopic() {
     return await prisma.topik.findMany({
       include: {
         role: {
           select: {
-            nama: true
-          }
+            nama: true,
+          },
         },
-        user : {
-          select : {
-            name : true
-          }
-        }
-      }
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
   }
 
   async getTopicById(id) {
     return await prisma.topik.findFirst({
       where: { id },
-      include : {
+      include: {
         role: {
           select: {
-            nama: true
-          }
+            nama: true,
+          },
         },
-      }
+      },
     });
-}
+  }
 
   async deletetTopic(id, userId) {
     const topic = await prisma.topik.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!topic) {
-      throw new Error('topic not found or unauthorized');
+      throw new Error("topic not found or unauthorized");
     }
 
     return await prisma.topik.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -67,44 +66,43 @@ class TopicService {
       data: {
         ...data,
         topikId,
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   }
   async deleteTopic(id, userId) {
     const topic = await prisma.topik.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!topic) {
-      throw new Error('topic not found');
+      throw new Error("topic not found");
     }
 
     await prisma.topikDetail.deleteMany({
-      where: { topikId: id }
+      where: { topikId: id },
     });
 
-
     await prisma.role.deleteMany({
-      where: { topikId: id }
+      where: { topikId: id },
     });
 
     return await prisma.topik.delete({
-      where: { id }
+      where: { id },
     });
   }
   async getPendaftarTopic() {
     return await prisma.topikDetail.findMany({
-      where : {
-        konfirmasi : "belum"
-      }
+      where: {
+        konfirmasi: "belum",
+      },
     });
   }
   async getPendaftarTopicAcc() {
     return await prisma.topikDetail.findMany({
-      where : {
-        konfirmasi : "sudah"
-      }
+      where: {
+        konfirmasi: "sudah",
+      },
     });
   }
 
@@ -113,7 +111,7 @@ class TopicService {
     const existingRecord = await prisma.topikDetail.findUnique({
       where: { id },
     });
-  
+
     if (!existingRecord) {
       throw new Error(`Record with ID ${id} not found`);
     }
@@ -121,48 +119,75 @@ class TopicService {
     return await prisma.topikDetail.update({
       where: { id },
       data: {
-        konfirmasi: "sudah"
-      }
+        konfirmasi: "sudah",
+      },
     });
   }
   async deletePendaftarTopic(id) {
     return await prisma.topikDetail.delete({
-      where: { id }
+      where: { id },
     });
   }
 
   async getPendaftarTopicFilter(data) {
     const inidatanya = await prisma.topikDetail.findMany({
       where: {
-        nama : data
-      }
+        nama: data,
+      },
     });
 
     if (!inidatanya) {
       return res.status(400).json({
         status: "failed",
-        message: "nama tidak ditemukan"
-      })
+        message: "nama tidak ditemukan",
+      });
     }
     return inidatanya;
   }
   async getPendaftarTopicAccFilter(data) {
     const inidatanya = await prisma.topikDetail.findMany({
       where: {
-        nama : data,
-        konfirmasi : "sudah"
-      }
+        nama: data,
+        konfirmasi: "sudah",
+      },
     });
 
     if (!inidatanya) {
       return res.status(400).json({
         status: "failed",
-        message: "nama tidak ditemukan"
-      })
+        message: "nama tidak ditemukan",
+      });
     }
     return inidatanya;
   }
+  async updateTopic(id, data, userId) {
+    const topic = await prisma.topik.findFirst({
+      where: { id, userId },
+    });
 
+    const { nama, deskripsi, roles } = data;
+
+    if (!topic) {
+      throw new Error("topic not found or unauthorized");
+    }
+
+    return await prisma.topik.update({
+      where: { id: id },
+      data: {
+        nama: nama || topic.nama, // Gunakan nama baru jika diberikan
+        deskripsi: deskripsi || topic.deskripsi, // Gunakan deskripsi baru jika diberikan
+        role: roles
+          ? {
+              deleteMany: {}, // Hapus semua role lama
+              create: roles.map((roleName) => ({ nama: roleName })), // Tambah role baru
+            }
+          : undefined, // Jika roles tidak diberikan, biarkan tetap sama
+      },
+      include: {
+        role: true, // Sertakan relasi roles dalam hasil
+      },
+    });
+  }
 }
 
 module.exports = new TopicService();
