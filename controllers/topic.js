@@ -227,6 +227,30 @@ class TopicController {
       console.log(error);
     }
   }
+  async updateTopic(req, res) {
+    try {
+      
+      const { nama, deskripsi, roles } = req.body;
+      if (!nama || typeof nama !== 'string') {
+          throw new HttpRequestError('Nama is required and must be a string');
+        }
+        
+        if (!deskripsi || typeof deskripsi !== 'string') {
+          throw new HttpRequestError('Deskripsi is required and must be a string');
+        }
+      const topic = await Topic.updateTopic(req.params.id, req.body, req.user.id);
+      res.status(200).json(topic);
+    } catch (error) {
+      if (error.message === 'topic not found or unauthorized') {
+        return res.status(404).json({ message: error.message });
+      }
+      console.log(error);
+      res.status(500).json({ 
+        status : 'Failed',
+        message: error.message
+      });
+    }
+  }
 }
 
 module.exports = new TopicController();
