@@ -53,7 +53,11 @@ class TopicController {
         if (error.message === 'topic not found or unauthorized') {
           return res.status(404).json({ message: error.message });
         }
-        res.status(500).json({ message: 'Internal server error' });
+        console.log(error);
+        res.status(500).json({ 
+          status : 'Failed',
+          message: error 
+        });
       }
     }
   
