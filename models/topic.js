@@ -77,6 +77,11 @@ class TopicService {
       where: { topikId: id }
     });
 
+
+    await prisma.role.deleteMany({
+      where: { topikId: id }
+    });
+
     return await prisma.topik.delete({
       where: { id }
     });
