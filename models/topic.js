@@ -184,7 +184,11 @@ class TopicService {
           : undefined, // Jika roles tidak diberikan, biarkan tetap sama
       },
       include: {
-        role: true, // Sertakan relasi roles dalam hasil
+        role: {
+          select: {
+            nama: true,
+          },
+        }, // Sertakan relasi roles dalam hasil
       },
     });
   }
