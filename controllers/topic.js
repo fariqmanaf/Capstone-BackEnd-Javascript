@@ -89,7 +89,6 @@ class TopicController {
             throw new HttpRequestError('No HP is required and must be a string');
         }
 
-        // await Topic.midlewareTopicDetail(req.params.topikId, res);
 
         const topikDetail = await Topic.createTopikDetail(
           req.body,
@@ -130,7 +129,6 @@ class TopicController {
           data: pendaftar
         });
 
-        res.status(200).json({ message: 'coba' });
       }catch(error){
         res.status(500).json({ message: 'Internal server error' });
         console.log(error);

@@ -45,6 +45,8 @@ model Logbook {
   nama String?
   user User @relation(fields: [userId], references: [id])
   detailLogbook DetailLogbook[]
+  tglDibuka DateTime
+  tglTerakhir DateTime
 }
 
 
@@ -61,6 +63,7 @@ model DetailLogbook {
   buktiKegiatan String
   logbook Logbook @relation(fields: [logbookId], references: [id])
   user User @relation(fields: [user_id], references: [id])
+  uploadAt DateTime
 }
 
 model Topik {

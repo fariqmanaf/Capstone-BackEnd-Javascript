@@ -62,6 +62,12 @@ class TopicService {
   }
 
   async createTopikDetail(data, topikId, userId) {
+    const topic = await prisma.topik.findFirst({
+      where: { id: topikId },
+    });
+    if (!topic) {
+      throw new Error("topic not found");
+    }
     return await prisma.topikDetail.create({
       data: {
         ...data,
@@ -95,7 +101,10 @@ class TopicService {
     return await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "belum",
-      },
+      }, 
+      include: {
+        topik: true
+      }
     });
   }
   async getPendaftarTopicAcc() {
@@ -103,6 +112,9 @@ class TopicService {
       where: {
         konfirmasi: "sudah",
       },
+      include: {
+        topik: true
+      }
     });
   }
 
