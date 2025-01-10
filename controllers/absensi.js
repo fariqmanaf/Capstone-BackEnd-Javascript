@@ -47,4 +47,30 @@ module.exports = {
       });
     }
   },
+  checkAttendance: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      if (!userId) {
+        return res.status(400).json({
+          status: "Failed",
+          message: "User ID is required",
+        });
+      }
+
+      const data = await Absensi.getAttendanceDetails(userId);
+      
+      return res.status(200).json({
+        status: "Success",
+        message: "Data absensi berhasil diambil",
+        data: data,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        status: "Failed",
+        message: err.message || "Internal server error",
+      });
+    }
+  },
 };

@@ -85,6 +85,37 @@ class Absensi {
 
     return processedDetails;
   }
+  static async getAttendanceDetails(userId) {
+    const detailLogbooks = await prisma.detailLogbook.findMany({
+      where: {
+        user_id: userId
+      },
+      select: {
+        uploadAt: true,
+        logbookId: true,
+        logbook: {
+          select: {
+            tglTerakhir: true
+          }
+        }
+      }
+    });
+
+    if (!detailLogbooks.length) {
+      return null;
+    }
+
+    // Process each detail logbook entry
+    const processedData = detailLogbooks.map(detail => ({
+      logbookId: detail.logbookId,
+      uploadAt: detail.uploadAt,
+      tglTerakhir: detail.logbook.tglTerakhir,
+      absensi: new Date(detail.uploadAt) <= new Date(detail.logbook.tglTerakhir)
+    }));
+
+    // Return the first processed entry
+    return processedData;
+  }
 }
 
 module.exports = Absensi;
