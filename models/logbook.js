@@ -23,7 +23,7 @@ class Logbook {
           namaDosen: true,
           target: true,
           kendala: true,
-          tanggal: true,
+          uploadAt: true,
           output: true,
           rincianKegiatan: true,
           buktiKegiatan: true,

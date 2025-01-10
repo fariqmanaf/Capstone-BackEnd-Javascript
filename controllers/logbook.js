@@ -77,7 +77,7 @@ module.exports = {
         });
       }
 
-      const { namaDosen, target, kendala, tanggal, output, rincianKegiatan } = req.body;
+      const { namaDosen, target, kendala, output, rincianKegiatan } = req.body;
 
       if (!namaDosen) {
         return res.status(400).json({
@@ -95,12 +95,6 @@ module.exports = {
         return res.status(400).json({
           status: "Failed",
           message: "Kendala tidak boleh kosong",
-        });
-      }
-      if (!tanggal) {
-        return res.status(400).json({
-          status: "Failed",
-          message: "Tanggal tidak boleh kosong",
         });
       }
       if (!output) {
@@ -137,7 +131,6 @@ module.exports = {
           target: target,
           user_id: userId,
           kendala: kendala,
-          tanggal: tanggal,
           output: output,
           buktiKegiatan: logbookfile,
           rincianKegiatan : rincianKegiatan,
