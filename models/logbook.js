@@ -41,7 +41,7 @@ class Logbook {
       throw new HttpRequestError("Internal Server Error", 500);
     }
   }
-  static async midllewareCreate(data, res, ) {
+  static async midllewareCreate(data) {
     try{
       const logbook = await prisma.logbook.findUnique({
         where : {
@@ -53,26 +53,30 @@ class Logbook {
       const progressSekarang = Number(logbook.progress);
       const progressKemarin = progressSekarang - 1;
       const progressKemarinString = progressKemarin.toString();
-      console.log(progressKemarinString);
-      const logbookId = await prisma.logbook.findFirst({
-        where : {
-          progress : progressKemarinString
-        }, select : {
-          id : true
+      if (progressKemarin !== 0){
+        const logbookId = await prisma.logbook.findFirst({
+          where : {
+            progress : progressKemarinString
+          }, select : {
+            id : true
+          }
+        })
+  
+        const logbookKemarin = await prisma.detailLogbook.findFirst({
+          where :{
+            logbookId : logbookId.id
+          }
+        })
+  
+        if (logbookKemarin === null){
+          return {
+            success: false,
+            message: `Logbook progress ${progressKemarin} belum di buat`,
+          }
         }
-      })
-
-      const logbookKemarin = await prisma.detailLogbook.findFirst({
-        where :{
-          logbookId : logbookId.id
-        }
-      })
-
-      if (logbookKemarin === null){
-        return {
-          success: false,
-          message: `Logbook progress ${progressKemarin} belum di buat`,
-        }
+      }
+      return {
+        success: true,
       }
     }catch(err){
       console.log(err);

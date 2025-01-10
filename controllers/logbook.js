@@ -67,7 +67,9 @@ module.exports = {
     try {
       const userId = req.user.id;
       const logbookId = req.params.id;
+      
       const midlleware = await Logbook.midllewareCreate(logbookId);
+
       if (!midlleware.success) {
         return res.status(400).json({
           status: "Failed",
@@ -115,6 +117,13 @@ module.exports = {
         });
       }
 
+      if (!req.file) {
+        return res.status(400).json({
+            status: 'Failed',
+            message: 'File bukti kegiatan tidak ditemukan',
+        });
+    }
+
       const uploadImageKit = await imagekit.upload({
         file: req.file.buffer.toString("base64"),
         fileName: req.file.originalname,
@@ -133,6 +142,7 @@ module.exports = {
           buktiKegiatan: logbookfile,
           rincianKegiatan : rincianKegiatan,
           logbookId: logbookId,
+          uploadAt : new Date()
         },
       });
 
@@ -145,7 +155,6 @@ module.exports = {
       console.log(err);
       return res.status(500).json({
         status: "Failed",
-        
         message: err || err.message + " ini error di controller logbook",
       });
     }

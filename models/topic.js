@@ -122,7 +122,7 @@ class TopicService {
     const existingRecord = await prisma.topikDetail.findUnique({
       where: { id },
     });
-
+      
     if (!existingRecord) {
       throw new Error(`Record with ID ${id} not found`);
     }
