@@ -97,32 +97,83 @@ class TopicService {
       where: { id },
     });
   }
-  async getPendaftarTopic() {
-    return await prisma.topikDetail.findMany({
+  async getPendaftarTopic(userId) {
+    const topics = await prisma.topik.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const topicIds = topics.map((topic) => topic.id);
+
+    const data = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "belum",
-      }, 
-      include: {
-        topik: true
-      }
-    });
-  }
-  async getPendaftarTopicAcc() {
-    return await prisma.topikDetail.findMany({
-      where: {
-        konfirmasi: "sudah",
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
       },
       include: {
-        topik: true
-      }
+        topik: true,
+      },
     });
+
+    if (!data || data.length === 0) {
+      return {
+        status: "failed",
+        message: "data tidak ditemukan",
+      };
+    }
+    return data;
+  }
+  async getPendaftarTopicAcc(userId) {
+    const topics = await prisma.topik.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    console.log(topics, "ini topics");
+    
+
+
+    const topicIds = topics.map((topic) => topic.id);
+
+    console.log(topicIds, "ini topicIds");
+
+    const data = await prisma.topikDetail.findMany({
+      where: {
+        konfirmasi: "sudah",
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
+      },
+      include: {
+        topik: true,
+      },
+    });
+
+    if (!data || data.length === 0) {
+      return {
+        status: "failed",
+        message: "data tidak ditemukan",
+      };
+    }
+    return data;
+
   }
 
   async updatePendaftarTopic(id, role1) {
     const existingRecord = await prisma.topikDetail.findUnique({
       where: { id },
     });
-      
+
     if (!existingRecord) {
       throw new Error(`Record with ID ${id} not found`);
     }
@@ -130,12 +181,11 @@ class TopicService {
     return await prisma.topikDetail.update({
       where: { id },
       data: {
-        role1: role1,  // Perbarui role1 dengan nilai baru
-        role2: "",     // Kosongkan role2
+        role1: role1, // Perbarui role1 dengan nilai baru
+        role2: "", // Kosongkan role2
         konfirmasi: "sudah",
       },
     });
-
   }
   async deletePendaftarTopic(id) {
     return await prisma.topikDetail.delete({
@@ -178,7 +228,7 @@ class TopicService {
     const topic = await prisma.topik.findFirst({
       where: { id },
     });
-  
+
     const { nama, deskripsi, roles } = data;
 
     if (!topic) {
@@ -193,7 +243,7 @@ class TopicService {
           ? {
               deleteMany: {}, // Hapus semua role lama
               create: roles
-                .filter((roleName) => roleName && typeof roleName === 'string') // Filter role yang valid
+                .filter((roleName) => roleName && typeof roleName === "string") // Filter role yang valid
                 .map((roleName) => ({ nama: roleName })), // Tambahkan role baru
             }
           : undefined,
@@ -208,11 +258,11 @@ class TopicService {
   async getRole(id) {
     console.log(id, "ini userId yang ada di model");
     const role = await prisma.topikDetail.findFirst({
-      where : {id},
+      where: { id },
       select: {
         role1: true,
         role2: true,
-      }
+      },
     });
     console.log(role, "ini role");
     if (!role) {

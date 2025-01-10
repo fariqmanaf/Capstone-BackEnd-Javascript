@@ -115,8 +115,8 @@ class TopicController {
   }
   async getPendaftarTopic(req, res) {
     try {
-      const pendaftar = await Topic.getPendaftarTopic();
-
+      const userId = req.user.id;
+      const pendaftar = await Topic.getPendaftarTopic(userId);
       res.status(200).json({
         status: "Success",
         message: "Pendaftar topic berhasil diambil",
@@ -129,7 +129,8 @@ class TopicController {
   }
   async getPendaftarTopicAcc(req, res) {
     try {
-      const pendaftar = await Topic.getPendaftarTopicAcc();
+      const userId = req.user.id;
+      const pendaftar = await Topic.getPendaftarTopicAcc(userId);
 
       res.status(200).json({
         status: "Success",
