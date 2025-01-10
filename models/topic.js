@@ -118,8 +118,7 @@ class TopicService {
     });
   }
 
-  async updatePendaftarTopic(id) {
-    console.log(id, "ini idnya");
+  async updatePendaftarTopic(id, role1) {
     const existingRecord = await prisma.topikDetail.findUnique({
       where: { id },
     });
@@ -131,9 +130,12 @@ class TopicService {
     return await prisma.topikDetail.update({
       where: { id },
       data: {
+        role1: role1,  // Perbarui role1 dengan nilai baru
+        role2: "",     // Kosongkan role2
         konfirmasi: "sudah",
       },
     });
+
   }
   async deletePendaftarTopic(id) {
     return await prisma.topikDetail.delete({
@@ -202,6 +204,21 @@ class TopicService {
         },
       },
     });
+  }
+  async getRole(id) {
+    console.log(id, "ini userId yang ada di model");
+    const role = await prisma.topikDetail.findFirst({
+      where : {id},
+      select: {
+        role1: true,
+        role2: true,
+      }
+    });
+    console.log(role, "ini role");
+    if (!role) {
+      throw new Error("role not found");
+    }
+    return role;
   }
 }
 
