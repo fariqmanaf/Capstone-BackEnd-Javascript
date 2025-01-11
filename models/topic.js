@@ -62,6 +62,12 @@ class TopicService {
   }
 
   async createTopikDetail(data, topikId, userId) {
+    const topic = await prisma.topik.findFirst({
+      where: { id: topikId },
+    });
+    if (!topic) {
+      throw new Error("topic not found");
+    }
     return await prisma.topikDetail.create({
       data: {
         ...data,
@@ -91,23 +97,79 @@ class TopicService {
       where: { id },
     });
   }
-  async getPendaftarTopic() {
-    return await prisma.topikDetail.findMany({
+  async getPendaftarTopic(userId) {
+    const topics = await prisma.topik.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const topicIds = topics.map((topic) => topic.id);
+
+    const data = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "belum",
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
+      },
+      include: {
+        topik: true,
       },
     });
+
+    if (!data || data.length === 0) {
+      return {
+        status: "failed",
+        message: "data tidak ditemukan",
+      };
+    }
+    return data;
   }
-  async getPendaftarTopicAcc() {
-    return await prisma.topikDetail.findMany({
+  async getPendaftarTopicAcc(userId) {
+    const topics = await prisma.topik.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    console.log(topics, "ini topics");
+    
+
+
+    const topicIds = topics.map((topic) => topic.id);
+
+    console.log(topicIds, "ini topicIds");
+
+    const data = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "sudah",
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
+      },
+      include: {
+        topik: true,
       },
     });
+
+    if (!data || data.length === 0) {
+      return {
+        status: "failed",
+        message: "data tidak ditemukan",
+      };
+    }
+    return data;
+
   }
 
-  async updatePendaftarTopic(id) {
-    console.log(id, "ini idnya");
+  async updatePendaftarTopic(id, role1) {
     const existingRecord = await prisma.topikDetail.findUnique({
       where: { id },
     });
@@ -119,6 +181,8 @@ class TopicService {
     return await prisma.topikDetail.update({
       where: { id },
       data: {
+        role1: role1, // Perbarui role1 dengan nilai baru
+        role2: "", // Kosongkan role2
         konfirmasi: "sudah",
       },
     });
@@ -164,7 +228,7 @@ class TopicService {
     const topic = await prisma.topik.findFirst({
       where: { id },
     });
-  
+
     const { nama, deskripsi, roles } = data;
 
     if (!topic) {
@@ -179,7 +243,7 @@ class TopicService {
           ? {
               deleteMany: {}, // Hapus semua role lama
               create: roles
-                .filter((roleName) => roleName && typeof roleName === 'string') // Filter role yang valid
+                .filter((roleName) => roleName && typeof roleName === "string") // Filter role yang valid
                 .map((roleName) => ({ nama: roleName })), // Tambahkan role baru
             }
           : undefined,
@@ -190,6 +254,21 @@ class TopicService {
         },
       },
     });
+  }
+  async getRole(id) {
+    console.log(id, "ini userId yang ada di model");
+    const role = await prisma.topikDetail.findFirst({
+      where: { id },
+      select: {
+        role1: true,
+        role2: true,
+      },
+    });
+    console.log(role, "ini role");
+    if (!role) {
+      throw new Error("role not found");
+    }
+    return role;
   }
 }
 
