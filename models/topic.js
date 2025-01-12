@@ -108,7 +108,6 @@ class TopicService {
     });
 
     const topicIds = topics.map((topic) => topic.id);
-
     const data = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "belum",
@@ -123,7 +122,6 @@ class TopicService {
 
     if (!data || data.length === 0) {
       return {
-        status: "failed",
         message: "data tidak ditemukan",
       };
     }
