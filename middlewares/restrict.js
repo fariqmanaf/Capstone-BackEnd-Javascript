@@ -102,4 +102,45 @@ module.exports = {
             });
         }
     },
+    uploadDokumen : async (req,res,next) => {
+        try {
+            const userId = req.user.id;
+            const dokumen = await prisma.dokumen.findFirst({
+                where: {
+                    userId: userId
+                }
+            });
+            if (!dokumen) {
+                throw new HttpRequestError('Silahkan melengkapi dokumen sebelum mendaftar topik', 401);
+            }
+            next();
+        }catch (err) {
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Silahkan melengkapi dokumen sebelum mendaftar topik',
+            });
+        }
+    },
+    daftarTopic : async (req,res,next) => {
+        try {
+            const user_id = req.user.id;
+            const topikDetail = await prisma.topikDetail.findFirst({
+                where: {
+                    userId: user_id
+                }
+            });
+            console.log(topikDetail);
+            if (topikDetail) {
+                throw new HttpRequestError('Anda belum mendaftar topik', 401);
+            }
+            next();
+        } catch (err) {
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Anda belum mendaftar topik',
+            });
+        }
+    }
 };

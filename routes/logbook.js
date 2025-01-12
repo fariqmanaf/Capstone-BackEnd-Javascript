@@ -21,7 +21,7 @@ const upload = multer({
 
 router.post("/make-logbook", Auth.dosen, logbook.makeLogbook);
 router.get("/logbook", Auth.allUser, logbook.getLogbook);
-router.post("/logbook/:id/create", Auth.mahasiswa, upload.single("buktiKegiatan"), logbook.makeLogbookDetail);
+router.post("/logbook/:id/create", Auth.mahasiswa, Auth.daftarTopic, upload.single("buktiKegiatan"), logbook.makeLogbookDetail);
 router.get("/logbook-mahasiswa", Auth.dosen, logbook.getLogbookDetail);
 router.get("/logbook-mahasiswa/:id", Auth.dosen, logbook.getLogbookDetailById);
 
