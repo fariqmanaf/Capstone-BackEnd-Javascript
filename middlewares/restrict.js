@@ -148,11 +148,11 @@ module.exports = {
             const topikDetail = await prisma.topikDetail.findFirst({
                 where: {
                     user_id: user_id,
-                    konfirmasi: 'belum'
+                    konfirmasi: 'sudah'
                 }
             });
             if (topikDetail) {
-                throw new HttpRequestError('Anda sudah mendaftar topik', 401);
+                throw new HttpRequestError('Anda sudah mempunyai topik', 401);
             }
             next();
         } catch (err) {
