@@ -155,6 +155,7 @@ module.exports = {
   getLogbookDetail: async (req, res, next) => {
     try {
       const data = await Logbook.allLogbookDetail();
+      
 
       return res.status(200).json({
         status: "Success",
@@ -162,6 +163,7 @@ module.exports = {
         data: data,
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).json({
         status: "Failed",
         message: err || err.message + " ini error",

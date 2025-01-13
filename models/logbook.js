@@ -42,7 +42,7 @@ class Logbook {
     }
   }
   static async midllewareCreate(data) {
-    try{
+    try{      
       const logbook = await prisma.logbook.findUnique({
         where : {
           id : data
@@ -75,6 +75,7 @@ class Logbook {
           }
         }
       }
+      
       return {
         success: true,
       }
