@@ -22,5 +22,7 @@ router.post('/change-password', Auth.userParams, UserController.changePassword);
 router.get('/profile', Auth.userParams, UserController.getProfile);
 router.post('/upload-document', Auth.userParams, uploadFields, UserController.uploadDocuments);
 router.get('/document/:id', Auth.dosen, UserController.getDocument);
+router.get('/dokumen-diri', Auth.mahasiswa, UserController.getDocumentDiri);
+router.get('/my-activity', Auth.mahasiswa, UserController.getMyActivity);
 
 module.exports = router;

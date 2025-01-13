@@ -10,5 +10,10 @@ router.use(userRouter);
 router.use(logbookRouter);
 router.use(topicRouter);
 router.use(absensiRouter);
+router.get('/', (req, res) => {
+  res.json({
+    message: 'hahahaha hayuk',
+  });
+});
 
 module.exports = router;
