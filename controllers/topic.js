@@ -116,24 +116,24 @@ class TopicController {
   async getPendaftarTopic(req, res) {
     try {
       const { nama } = req.query;
-      console.log(nama);
-      if (!nama === "") {
-        const pendaftar = await Topic.getPendaftarTopic(userId);
-
-        res.status(200).json({
+      const userId = req.user.id;
+      if (nama) {
+        const data = await Topic.getPendaftarTopicFilter(nama, userId);
+        return res.status(200).json({
           status: "Success",
           message: "Pendaftar topic berhasil diambil",
-          data: pendaftar,
+          data: data,
         });
       }
-
-      const data = await Topic.getPendaftarTopicFilter(nama);
-      res.status(200).json({
+      console.log("ini lolos");
+      const pendaftar = await Topic.getPendaftarTopic(userId);
+      return res.status(200).json({
         status: "Success",
         message: "Pendaftar topic berhasil diambil",
-        data: data,
+        data: pendaftar,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         status: "Failed",
         message: error,
@@ -143,9 +143,9 @@ class TopicController {
 
   async updatePendaftarTopic(req, res) {
     try {
-      const {role1} = req.body;
+      const { role1 } = req.body;
       const pendaftar = await Topic.updatePendaftarTopic(req.params.id, role1);
-      
+
       const hapus = await Topic.deleteTopicLain(pendaftar.user_id);
       console.log(hapus);
 
@@ -174,20 +174,22 @@ class TopicController {
   async getPendaftarTopicAcc(req, res) {
     try {
       const { nama } = req.query;
-      if (nama === "") {
-        const pendaftar = await Topic.getPendaftarTopicAcc();
-
+      const userId = req.user.id;
+      if (nama) {
+        console.log("masuk sini");
+        
+        const data = await Topic.getPendaftarTopicAccFilter(nama, userId);
         res.status(200).json({
           status: "Success",
           message: "Pendaftar topic berhasil diambil",
-          data: pendaftar,
+          data: data,
         });
       }
-      const data = await Topic.getPendaftarTopicAccFilter(nama);
-      res.status(200).json({
+      const pendaftar = await Topic.getPendaftarTopicAcc();
+      return res.status(200).json({
         status: "Success",
         message: "Pendaftar topic berhasil diambil",
-        data: data,
+        data: pendaftar,
       });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
