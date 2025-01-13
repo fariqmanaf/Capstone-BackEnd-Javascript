@@ -127,11 +127,10 @@ module.exports = {
             const user_id = req.user.id;
             const topikDetail = await prisma.topikDetail.findFirst({
                 where: {
-                    userId: user_id
+                    user_id: user_id
                 }
             });
-            console.log(topikDetail);
-            if (topikDetail) {
+            if (!topikDetail) {
                 throw new HttpRequestError('Anda belum mendaftar topik', 401);
             }
             next();
