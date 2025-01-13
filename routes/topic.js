@@ -4,10 +4,10 @@ const TopicController = require('../controllers/topic');
 
 
 router.post('/create-topic', Auth.dosen, TopicController.createTopic);
-router.get('/topic', Auth.allUser, Auth.uploadDokumen, TopicController.getAllTopic);
+router.get('/topic', Auth.allUser, TopicController.getAllTopic);
 router.get('/topic/:id', Auth.allUser, TopicController.getTopicById);
 router.delete('/delete-topic/:id', Auth.dosen, TopicController.deleteTopic);
-router.post('/create-topic/:topikId', Auth.mahasiswa, TopicController.createTopikDetail);
+router.post('/create-topic/:topikId', Auth.mahasiswa, Auth.uploadDokumen, TopicController.createTopikDetail);
 router.put('/update-topic/:id', Auth.dosen, TopicController.updateTopic);
 router.get('/get-role/:id', Auth.dosen, TopicController.getRole);
 router.get('/pendaftar-topic', Auth.dosen, TopicController.getPendaftarTopic);
