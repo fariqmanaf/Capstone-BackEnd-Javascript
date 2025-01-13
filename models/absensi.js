@@ -15,6 +15,8 @@ class Absensi {
     return data;
   }
   static async getMahasiswaByTopic(trimmedNama, userId) {
+    try{
+
     const topic = await prisma.topik.findFirst({
       where: {
         userId,
@@ -34,7 +36,7 @@ class Absensi {
           },
         },
       },
-    });
+    });    
 
     if (!topic || !topic.topikDetail.length) {
       return null;
@@ -84,6 +86,13 @@ class Absensi {
     );
 
     return processedDetails;
+  }catch(err){
+    console.log(err);
+    return  {
+      status: "Failed",
+      message: err || err.message + " ini error",
+    }
+  }
   }
   static async getAttendanceDetails(userId) {
     const detailLogbooks = await prisma.detailLogbook.findMany({
