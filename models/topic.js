@@ -117,6 +117,15 @@ class TopicService {
       },
       include: {
         topik: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            noHp: true,
+            nim: true,
+            dokumen: true,
+          },
+        },
       },
     });
 
@@ -138,8 +147,6 @@ class TopicService {
     });
 
     console.log(topics, "ini topics");
-    
-
 
     const topicIds = topics.map((topic) => topic.id);
 
@@ -154,6 +161,15 @@ class TopicService {
       },
       include: {
         topik: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            noHp: true,
+            nim: true,
+            dokumen: true,
+          },
+        },
       },
     });
 
@@ -164,7 +180,6 @@ class TopicService {
       };
     }
     return data;
-
   }
 
   async updatePendaftarTopic(id, role1) {
