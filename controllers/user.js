@@ -218,6 +218,34 @@ class UserController {
     });
     }
   }
+  static async getMyActivity(req, res) {
+    try {
+      const user_id = req.user.id;
+      const data = await prisma.topikDetail.findFirst({
+        where : {
+          user_id : user_id
+        },include : {
+          topik : true
+        }
+        }); 
+      if (!data) {
+        return res.status(200).json({ 
+          status: 'success',
+          message: 'kamu belum ikut apa apa alias nolep cok'
+         });
+      }
+      return res.status(200).json({
+        status: 'success',
+        data: data
+      });
+    }catch (error) {
+      console.log(error);
+      res.status(500).json({ 
+        status: 'Failed',
+        error: error.message 
+    });
+    }
+  }
 }
 
 module.exports = UserController;
