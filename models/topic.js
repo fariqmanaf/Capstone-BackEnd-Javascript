@@ -204,7 +204,6 @@ class TopicService {
   }
 
   async getPendaftarTopicFilter(data, userId) {
-
     const topics = await prisma.topik.findMany({
       where: {
         userId,
@@ -213,13 +212,18 @@ class TopicService {
         id: true,
       },
     });
+    
     const topicIds = topics.map((topic) => topic.id);
+    
     const datas = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "belum",
-        nama: data,
+        nama: {
+          contains: data,    // Menggunakan contains untuk pencarian partial
+          mode: 'insensitive'  // Mengabaikan case (huruf besar/kecil)
+        },
         topikId: {
-          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+          in: topicIds,
         },
       },
       include: {
@@ -235,15 +239,13 @@ class TopicService {
         },
       },
     });
-
     if (!datas || datas.length === 0) {
       return {
         message: "data tidak ditemukan",
       };
     }
-    
     return datas;
-  }
+}
   async getPendaftarTopicAccFilter(data, userId) {
     const topics = await prisma.topik.findMany({
       where: {
@@ -253,13 +255,18 @@ class TopicService {
         id: true,
       },
     });
+    
     const topicIds = topics.map((topic) => topic.id);
+    
     const datas = await prisma.topikDetail.findMany({
       where: {
         konfirmasi: "sudah",
-        nama: data,
+        nama: {
+          contains: data,    // Menggunakan contains untuk pencarian partial
+          mode: 'insensitive'  // Mengabaikan case (huruf besar/kecil)
+        },
         topikId: {
-          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+          in: topicIds,
         },
       },
       include: {
@@ -275,15 +282,13 @@ class TopicService {
         },
       },
     });
-
     if (!datas || datas.length === 0) {
       return {
         message: "data tidak ditemukan",
       };
     }
-    console.log(datas, "ini data");
     return datas;
-  }
+}
   async updateTopic(id, data, userId) {
     const topic = await prisma.topik.findFirst({
       where: { id },
