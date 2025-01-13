@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const HttpRequestError = require('../utils/error');
+const HttpRequestError = require("../utils/error");
 
 class TopicService {
   async createtopic(data, userId) {
@@ -108,8 +108,6 @@ class TopicService {
       },
     });
 
-    console.log(topics, "ini topics");
-    
     const topicIds = topics.map((topic) => topic.id);
     const data = await prisma.topikDetail.findMany({
       where: {
@@ -149,10 +147,7 @@ class TopicService {
       },
     });
 
-
     const topicIds = topics.map((topic) => topic.id);
-
-    console.log(topicIds, "ini topicIds");
 
     const data = await prisma.topikDetail.findMany({
       where: {
@@ -208,37 +203,86 @@ class TopicService {
     });
   }
 
-  async getPendaftarTopicFilter(data) {
-    const inidatanya = await prisma.topikDetail.findMany({
+  async getPendaftarTopicFilter(data, userId) {
+
+    const topics = await prisma.topik.findMany({
       where: {
-        nama: data,
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    const topicIds = topics.map((topic) => topic.id);
+    const datas = await prisma.topikDetail.findMany({
+      where: {
         konfirmasi: "belum",
-      },
-    });
-
-    if (!inidatanya) {
-      return res.status(400).json({
-        status: "failed",
-        message: "nama tidak ditemukan",
-      });
-    }
-    return inidatanya;
-  }
-  async getPendaftarTopicAccFilter(data) {
-    const inidatanya = await prisma.topikDetail.findMany({
-      where: {
         nama: data,
-        konfirmasi: "sudah",
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
+      },
+      include: {
+        topik: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            noHp: true,
+            nim: true,
+            dokumen: true,
+          },
+        },
       },
     });
 
-    if (!inidatanya) {
-      return res.status(400).json({
-        status: "failed",
-        message: "nama tidak ditemukan",
-      });
+    if (!datas || datas.length === 0) {
+      return {
+        message: "data tidak ditemukan",
+      };
     }
-    return inidatanya;
+    
+    return datas;
+  }
+  async getPendaftarTopicAccFilter(data, userId) {
+    const topics = await prisma.topik.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    const topicIds = topics.map((topic) => topic.id);
+    const datas = await prisma.topikDetail.findMany({
+      where: {
+        konfirmasi: "sudah",
+        nama: data,
+        topikId: {
+          in: topicIds, // Pastikan `topikId` termasuk dalam array `topicIds`
+        },
+      },
+      include: {
+        topik: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            noHp: true,
+            nim: true,
+            dokumen: true,
+          },
+        },
+      },
+    });
+
+    if (!datas || datas.length === 0) {
+      return {
+        message: "data tidak ditemukan",
+      };
+    }
+    console.log(datas, "ini data");
+    return datas;
   }
   async updateTopic(id, data, userId) {
     const topic = await prisma.topik.findFirst({
@@ -286,27 +330,25 @@ class TopicService {
     }
     return role;
   }
-  async deleteTopicLain (userId) {
-    try{
-
+  async deleteTopicLain(userId) {
+    try {
       await prisma.topikDetail.deleteMany({
         where: {
-          user_id : userId,
-          konfirmasi : "belum"
+          user_id: userId,
+          konfirmasi: "belum",
         },
       });
-      return  {
+      return {
         status: "Success",
-        message: "data berhasil dihapus"
-      }
-    }catch (error) {
+        message: "data berhasil dihapus",
+      };
+    } catch (error) {
       console.log(error);
       return {
         status: "Failed",
-        message: error
-      }
+        message: error,
+      };
     }
-
   }
 }
 
