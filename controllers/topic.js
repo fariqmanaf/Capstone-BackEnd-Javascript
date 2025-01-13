@@ -175,11 +175,10 @@ class TopicController {
     try {
       const { nama } = req.query;
       const userId = req.user.id;
-      if (nama) {
-        console.log("masuk sini");
-        
+
+      if (nama) {        
         const data = await Topic.getPendaftarTopicAccFilter(nama, userId);
-        res.status(200).json({
+        return res.status(200).json({
           status: "Success",
           message: "Pendaftar topic berhasil diambil",
           data: data,
