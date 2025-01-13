@@ -16,6 +16,7 @@ class Absensi {
   }
   static async getMahasiswaByTopic(trimmedNama, userId) {
     try{
+      console.log(trimmedNama, userId, "====> INI USER ID");
 
     const topic = await prisma.topik.findFirst({
       where: {
