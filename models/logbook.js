@@ -33,10 +33,7 @@ class Logbook {
           user_id : true
         }
       })
-      const idMahasiswa = idMahasiswas.map((id) => id.user_id);
-
-      console.log(idMahasiswa);
-      
+      const idMahasiswa = idMahasiswas.map((id) => id.user_id);      
 
       const logbookDetail = await prisma.detailLogbook.findMany({
         where: {
@@ -58,8 +55,19 @@ class Logbook {
           user: {
             select: {
               name: true,
-            },
-          },
+              nim: true,
+              topikDetail: {
+                select: {
+                  topik: {
+                    select: {
+                      nama: true,
+                      deskripsi: true
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
       });
 

@@ -11,9 +11,7 @@ router.post('/create-topic/:topikId', Auth.mahasiswa, Auth.uploadDokumen,Auth.on
 router.put('/update-topic/:id', Auth.dosen, TopicController.updateTopic);
 router.get('/get-role/:id', Auth.dosen, TopicController.getRole);
 router.get('/pendaftar-topic', Auth.dosen, TopicController.getPendaftarTopic);
-router.get('/pendaftar-topic/filter', Auth.dosen, TopicController.getPendaftarTopicFilter);
 router.get('/pendaftar-topic-acc', Auth.dosen, TopicController.getPendaftarTopicAcc);
-router.get('/pendaftar-topic-acc/filter', Auth.dosen, TopicController.getPendaftarTopicAccFilter);
 router.patch('/update-pendaftar-topic/:id', Auth.dosen, TopicController.updatePendaftarTopic);
 router.delete('/delete-pendaftar-topic/:id', Auth.dosen, TopicController.deletePendaftarTopic);
 

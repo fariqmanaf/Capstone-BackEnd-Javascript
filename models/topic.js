@@ -108,6 +108,8 @@ class TopicService {
       },
     });
 
+    console.log(topics, "ini topics");
+    
     const topicIds = topics.map((topic) => topic.id);
     const data = await prisma.topikDetail.findMany({
       where: {
@@ -147,7 +149,6 @@ class TopicService {
       },
     });
 
-    console.log(topics, "ini topics");
 
     const topicIds = topics.map((topic) => topic.id);
 
@@ -211,6 +212,7 @@ class TopicService {
     const inidatanya = await prisma.topikDetail.findMany({
       where: {
         nama: data,
+        konfirmasi: "belum",
       },
     });
 

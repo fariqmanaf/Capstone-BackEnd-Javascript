@@ -115,34 +115,32 @@ class TopicController {
   }
   async getPendaftarTopic(req, res) {
     try {
-      const userId = req.user.id;
-      
-      const pendaftar = await Topic.getPendaftarTopic(userId);
-      res.status(200).json({
-        status: "Success",
-        message: "Pendaftar topic berhasil diambil",
-        data: pendaftar,
-      });
-    } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
-      console.log(error);
-    }
-  }
-  async getPendaftarTopicAcc(req, res) {
-    try {
-      const userId = req.user.id;
-      const pendaftar = await Topic.getPendaftarTopicAcc(userId);
+      const { nama } = req.query;
+      console.log(nama);
+      if (!nama === "") {
+        const pendaftar = await Topic.getPendaftarTopic(userId);
 
+        res.status(200).json({
+          status: "Success",
+          message: "Pendaftar topic berhasil diambil",
+          data: pendaftar,
+        });
+      }
+
+      const data = await Topic.getPendaftarTopicFilter(nama);
       res.status(200).json({
         status: "Success",
         message: "Pendaftar topic berhasil diambil",
-        data: pendaftar,
+        data: data,
       });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
-      console.log(error);
+      res.status(500).json({
+        status: "Failed",
+        message: error,
+      });
     }
   }
+
   async updatePendaftarTopic(req, res) {
     try {
       const {role1} = req.body;
@@ -173,32 +171,7 @@ class TopicController {
       console.log(error);
     }
   }
-  async getPendaftarTopicFilter(req, res) {
-    try {
-      const { nama } = req.query;
-      if (nama === "") {
-        const pendaftar = await Topic.getPendaftarTopic();
-
-        res.status(200).json({
-          status: "Success",
-          message: "Pendaftar topic berhasil diambil",
-          data: pendaftar,
-        });
-      }
-      const data = await Topic.getPendaftarTopicFilter(nama);
-      res.status(200).json({
-        status: "Success",
-        message: "Pendaftar topic berhasil diambil",
-        data: data,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: "Failed",
-        message: error,
-      });
-    }
-  }
-  async getPendaftarTopicAccFilter(req, res) {
+  async getPendaftarTopicAcc(req, res) {
     try {
       const { nama } = req.query;
       if (nama === "") {
