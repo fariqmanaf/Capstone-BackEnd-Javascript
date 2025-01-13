@@ -13,9 +13,37 @@ class Logbook {
     });
     return logbook;
   }
-  static async allLogbookDetail() {
+  static async allLogbookDetail(logbookId, userId) {
     try {
+      const topicIds = await prisma.topik.findMany({
+        where : {
+          userId : userId
+        }, select : {
+          id : true
+        }
+      })
+      const topicId = topicIds.map((topic) => topic.id);
+
+      const idMahasiswas = await prisma.topikDetail.findMany({
+        where : {
+          topikId : {
+            in : topicId
+          }
+        }, select : {
+          user_id : true
+        }
+      })
+      const idMahasiswa = idMahasiswas.map((id) => id.user_id);
+
+      console.log(idMahasiswa);
+      
+
       const logbookDetail = await prisma.detailLogbook.findMany({
+        where: {
+          user_id : {
+            in : idMahasiswa
+          },
+        },
         select: {
           id: true,
           user_id: true,

@@ -68,7 +68,7 @@ module.exports = {
       const userId = req.user.id;
       const logbookId = req.params.id;
       
-      const midlleware = await Logbook.midllewareCreate(logbookId);
+      const midlleware = await Logbook.midllewareCreate(logbookId, userId);
 
       if (!midlleware.success) {
         return res.status(400).json({

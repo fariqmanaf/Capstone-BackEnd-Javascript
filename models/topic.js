@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const HttpRequestError = require('../utils/error');
 
 class TopicService {
   async createtopic(data, userId) {
@@ -282,6 +283,28 @@ class TopicService {
       throw new Error("role not found");
     }
     return role;
+  }
+  async deleteTopicLain (userId) {
+    try{
+
+      await prisma.topikDetail.deleteMany({
+        where: {
+          user_id : userId,
+          konfirmasi : "belum"
+        },
+      });
+      return  {
+        status: "Success",
+        message: "data berhasil dihapus"
+      }
+    }catch (error) {
+      console.log(error);
+      return {
+        status: "Failed",
+        message: error
+      }
+    }
+
   }
 }
 

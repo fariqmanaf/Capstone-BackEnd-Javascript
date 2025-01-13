@@ -116,6 +116,7 @@ class TopicController {
   async getPendaftarTopic(req, res) {
     try {
       const userId = req.user.id;
+      
       const pendaftar = await Topic.getPendaftarTopic(userId);
       res.status(200).json({
         status: "Success",
@@ -146,6 +147,9 @@ class TopicController {
     try {
       const {role1} = req.body;
       const pendaftar = await Topic.updatePendaftarTopic(req.params.id, role1);
+      
+      const hapus = await Topic.deleteTopicLain(pendaftar.user_id);
+      console.log(hapus);
 
       res.status(201).json({
         status: "Success",

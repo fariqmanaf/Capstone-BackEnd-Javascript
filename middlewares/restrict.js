@@ -141,5 +141,26 @@ module.exports = {
                 message: err.message || 'Anda belum mendaftar topik',
             });
         }
+    },
+    onlyOneTopic : async (req,res,next) => {
+        try {
+            const user_id = req.user.id;
+            const topikDetail = await prisma.topikDetail.findFirst({
+                where: {
+                    user_id: user_id,
+                    konfirmasi: 'belum'
+                }
+            });
+            if (topikDetail) {
+                throw new HttpRequestError('Anda sudah mendaftar topik', 401);
+            }
+            next();
+        } catch (err) {
+            res.status(err.statusCode || 401).json({
+                status: 'Failed',
+                statusCode: err.statusCode || 401,
+                message: err.message || 'Anda sudah mendaftar topik',
+            });
+        }
     }
 };
