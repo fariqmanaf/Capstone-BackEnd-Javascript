@@ -218,6 +218,32 @@ class UserController {
     });
     }
   }
+
+  static async getDocumentDiri(req, res) {
+    try {
+      const userId = req.user.id;
+      const document = await prisma.dokumen.findUnique({
+        where: { userId }
+      });
+
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      res.status(200).json({ 
+        status: 'success',
+        data: document
+    });
+
+    } catch (error) {
+      res.status(500).json({ 
+        status: 'Failed',
+        error: error.message 
+    });
+    }
+  }
+
+
   static async getMyActivity(req, res) {
     try {
       const user_id = req.user.id;
