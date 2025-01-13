@@ -70,7 +70,8 @@ class Logbook {
           },
           logbook: {
             select: {
-              tglTerakhir: true
+              tglTerakhir: true,
+              nama : true
             }
           }
         },
