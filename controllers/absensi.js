@@ -20,10 +20,9 @@ module.exports = {
   getMahasiswaByTopic: async (req, res) => {
     try {
       const userId = req.user.id;
-      const { topic } = req.query; // nama dari query params
+      const { topic } = req.query; 
 
       const trimmedNama = topic ? topic.trim() : "";
-      console.log(trimmedNama, "ini trimmedNama");
       
       const data = await Absensi.getMahasiswaByTopic(trimmedNama, userId);
       

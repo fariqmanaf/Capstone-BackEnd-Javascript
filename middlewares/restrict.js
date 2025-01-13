@@ -151,9 +151,23 @@ module.exports = {
                     konfirmasi: 'sudah'
                 }
             });
+            console.log(req.params.topikId);
+
+            const topikDetail2 = await prisma.topikDetail.findFirst({
+                where: {
+                    user_id: user_id,
+                    topikId: req.params.topikId,
+                }
+            });
+            if (topikDetail2) {
+                throw new HttpRequestError('Anda sudah mendaftar topik ini', 401);
+            }
+            
             if (topikDetail) {
                 throw new HttpRequestError('Anda sudah mempunyai topik', 401);
             }
+            
+            const topikId = req.params.topikId;
             next();
         } catch (err) {
             res.status(err.statusCode || 401).json({

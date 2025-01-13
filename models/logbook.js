@@ -67,6 +67,11 @@ class Logbook {
                 }
               }
             }
+          },
+          logbook: {
+            select: {
+              tglTerakhir: true
+            }
           }
         },
       });

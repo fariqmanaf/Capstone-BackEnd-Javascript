@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { login } = require("../validations/auth");
 const prisma = new PrismaClient();
 
 class Absensi {
@@ -39,7 +40,6 @@ class Absensi {
       return null;
     }
 
-    // Process each detail for the single topic
     const processedDetails = await Promise.all(
       topic.topikDetail.map(async (detail) => {
         const detailLogbooks = await prisma.detailLogbook.findMany({
