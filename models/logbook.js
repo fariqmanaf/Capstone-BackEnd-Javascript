@@ -14,7 +14,8 @@ class Logbook {
     return logbook;
   }
   static async allLogbookDetail(logbookId, userId) {
-    try {
+
+    try {      
       const topicIds = await prisma.topik.findMany({
         where : {
           userId : userId
