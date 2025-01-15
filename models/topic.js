@@ -191,17 +191,13 @@ class TopicService {
     const changed = await prisma.topikDetail.update({
       where: { id },
       data: {
-        role1: "", // Perbarui role1 dengan nilai baru
+        role1: role1, // Perbarui role1 dengan nilai baru
         role2: "", // Kosongkan role2
         konfirmasi: "sudah",
       },
     });
-    return await prisma.topikDetail.update({
-      where: { id },
-      data: {
-        role1: role1,
-      },
-    });
+    console.log(changed, "ini changed");
+    return changed;
 
   }
   async deletePendaftarTopic(id) {
