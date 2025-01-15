@@ -199,7 +199,7 @@ class TopicService {
     return await prisma.topikDetail.update({
       where: { id },
       data: {
-        role1: role1 || existingRecord.role1,
+        role1: role1,
       },
     });
 
