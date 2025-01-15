@@ -188,14 +188,21 @@ class TopicService {
       throw new Error(`Record with ID ${id} not found`);
     }
 
-    return await prisma.topikDetail.update({
+    const changed = await prisma.topikDetail.update({
       where: { id },
       data: {
-        role1: role1, // Perbarui role1 dengan nilai baru
+        role1: "", // Perbarui role1 dengan nilai baru
         role2: "", // Kosongkan role2
         konfirmasi: "sudah",
       },
     });
+    return await prisma.topikDetail.update({
+      where: { id },
+      data: {
+        role1: role1,
+      },
+    });
+
   }
   async deletePendaftarTopic(id) {
     return await prisma.topikDetail.delete({
