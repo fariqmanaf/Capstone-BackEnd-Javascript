@@ -57,6 +57,8 @@ module.exports = {
         data: data,
       });
     } catch (err) {
+      console.log(err);
+      
       return res.status(500).json({
         status: "Failed",
         message: err || err.message + " ini error",
