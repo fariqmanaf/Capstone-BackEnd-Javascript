@@ -132,7 +132,7 @@ class Logbook {
       }
     }
   }
-  static async getLogbookById(logbookId) {
+  static async getLogbookById(logbookId, userId) {
     const detailLogbook = await prisma.detailLogbook.findMany({
       where: {
         logbookId: logbookId,
