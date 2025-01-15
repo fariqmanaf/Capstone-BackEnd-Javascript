@@ -191,5 +191,21 @@ module.exports = {
       });
     }
   },
+
+  getLogbookById : async (req, res, next) => {
+    const logbookId = req.params.id;
+    const data = await Logbook.getLogbookById(logbookId);
+    if (!data) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Logbook tidak ditemukan",
+      });
+    }
+    return res.status(200).json({
+      status: "Success",
+      message: "Logbook berhasil diambil",
+      data: data,
+    });
+  }
   
 };
