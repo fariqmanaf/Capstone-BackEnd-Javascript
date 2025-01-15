@@ -109,6 +109,7 @@ class Absensi {
       select: {
         uploadAt: true,
         logbookId: true,
+        izin: true,
         logbook: {
           select: {
             tglTerakhir: true
@@ -121,12 +122,31 @@ class Absensi {
       return null;
     }
 
-    const processedData = detailLogbooks.map(detail => ({
+    
+
+    const processedData = detailLogbooks.map(detail => {
+      const uploadAt = new Date(detail.uploadAt);
+      const tglTerakhir = new Date(detail.logbook.tglTerakhir);
+      const izin = detail.izin?.toLowerCase() === 'true';
+      let absensi;
+
+      if (uploadAt <= tglTerakhir) {
+      absensi = 'hadir';
+      } else if (izin && uploadAt <= tglTerakhir) {
+      absensi = 'izin';
+      } else if (izin && uploadAt > tglTerakhir) {
+      absensi = 'alpha';
+      } else if (uploadAt > tglTerakhir) {
+      absensi = 'alpha';
+      }
+
+      return {
       logbookId: detail.logbookId,
       uploadAt: detail.uploadAt,
       tglTerakhir: detail.logbook.tglTerakhir,
-      absensi: new Date(detail.uploadAt) <= new Date(detail.logbook.tglTerakhir)
-    }));
+      absensi: absensi
+      };
+    });
     
 
 
