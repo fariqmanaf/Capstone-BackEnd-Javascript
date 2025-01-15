@@ -69,15 +69,15 @@ module.exports = {
       const logbookId = req.params.id;
       
       const midlleware = await Logbook.midllewareCreate(logbookId, userId);
-
+      
       if (!midlleware.success) {
         return res.status(400).json({
           status: "Failed",
           message: midlleware.message,
         });
       }
-
-      const { namaDosen, target, kendala, output, rincianKegiatan } = req.body;
+      
+      const { namaDosen, target, kendala, output, rincianKegiatan, izin } = req.body;
 
       if (!namaDosen) {
         return res.status(400).json({
@@ -125,19 +125,59 @@ module.exports = {
       });
 
       const logbookfile = uploadImageKit.url;
-      const data = await prisma.detailLogbook.create({
-        data: {
-          namaDosen: namaDosen,
-          target: target,
-          user_id: userId,
-          kendala: kendala,
-          output: output,
-          buktiKegiatan: logbookfile,
-          rincianKegiatan : rincianKegiatan,
+      const midlleware2 = await Logbook.midllewareCreate2(logbookId);
+
+      const existingData = await prisma.detailLogbook.findFirst({
+        where: {
           logbookId: logbookId,
-          uploadAt : new Date()
-        },
-      });
+          user_id: userId
+        }, select: {
+          id: true
+        }
+      });      
+
+
+      if (existingData) {
+        data = await prisma.detailLogbook.update({
+          where: {
+        id: existingData.id
+          },
+        data: {
+        namaDosen: namaDosen,
+        target: target,
+        user_id: userId,
+        kendala: kendala,
+        output: output,
+        buktiKegiatan: logbookfile,
+        rincianKegiatan: rincianKegiatan,
+        logbookId: logbookId,
+        uploadAt: new Date(),
+        izin: izin
+          }
+        });
+        return res.status(201).json({
+          status: "Success",
+          message: "Logbook Detail berhasil diubah",
+          data: data,
+        });
+
+
+      } 
+      
+      data = await prisma.detailLogbook.create({
+          data: {
+        namaDosen: namaDosen,
+        target: target,
+        user_id: userId,
+        kendala: kendala,
+        output: output,
+        buktiKegiatan: logbookfile,
+        rincianKegiatan: rincianKegiatan,
+        logbookId: logbookId,
+        uploadAt: new Date(),
+        izin: izin
+          }
+        });
 
       return res.status(201).json({
         status: "Success",

@@ -63,6 +63,7 @@ model DetailLogbook {
   logbook Logbook @relation(fields: [logbookId], references: [id])
   user User @relation(fields: [user_id], references: [id])
   uploadAt DateTime
+  izin String?
 }
 
 model Topik {
