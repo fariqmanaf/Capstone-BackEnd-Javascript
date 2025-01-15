@@ -9,6 +9,8 @@ class Logbook {
         id: true,
         nama: true,
         progress: true,
+        tglTerakhir: true,
+        tglDibuka: true,
       },
     });
     return logbook;
@@ -129,6 +131,14 @@ class Logbook {
         message: err,
       }
     }
+  }
+  static async getLogbookById(logbookId) {
+    const detailLogbook = await prisma.detailLogbook.findMany({
+      where: {
+        logbookId: logbookId,
+      },
+    });
+    return detailLogbook;
   }
 
 }

@@ -115,15 +115,15 @@ class Absensi {
       return null;
     }
 
-    // Process each detail logbook entry
     const processedData = detailLogbooks.map(detail => ({
       logbookId: detail.logbookId,
       uploadAt: detail.uploadAt,
       tglTerakhir: detail.logbook.tglTerakhir,
       absensi: new Date(detail.uploadAt) <= new Date(detail.logbook.tglTerakhir)
     }));
+    
 
-    // Return the first processed entry
+
     return processedData;
   }
 }
