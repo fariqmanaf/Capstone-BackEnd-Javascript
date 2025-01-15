@@ -11,6 +11,7 @@ class Logbook {
         progress: true,
         tglTerakhir: true,
         tglDibuka: true,
+        izin: true,
       },
     });
     return logbook;
@@ -132,6 +133,35 @@ class Logbook {
       }
     }
   }
+  static async midllewareCreate2(data) {
+    try {
+      const logbook = await prisma.logbook.findUnique({
+        where: {
+          id: data,
+        },
+        select: {
+          tglDibuka: true,
+        },
+      });
+      const upload = new Date();
+      if (upload < logbook.tglDibuka) {
+        return {
+          success: false,
+          message: "Periode Logbook belum dibuka",
+        };
+      }
+      return {
+        success: true,
+      };
+    }catch(err){
+      console.log(err);
+      return {
+        success: false,
+        message: err,
+      }
+    }
+  }
+
   static async getLogbookById(logbookId, userId) {
     const detailLogbook = await prisma.detailLogbook.findMany({
       where: {

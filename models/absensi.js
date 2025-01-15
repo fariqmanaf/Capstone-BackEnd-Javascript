@@ -63,15 +63,20 @@ class Absensi {
 
             const uploadAt = new Date(logbookDetail.uploadAt);
             const tglTerakhir = new Date(logbookDetail.logbook.tglTerakhir);
+            const izin = logbookDetail.izin?.toLowerCase() === 'true';
 
             if (uploadAt <= tglTerakhir) {
               acc.hadir++;
-            } else {
-              acc.telat++;
+            } else if (izin && uploadAt <= tglTerakhir) {
+              acc.izin++;
+            } else if (izin && uploadAt > tglTerakhir) {
+              acc.alpha++;
+            } else if (uploadAt > tglTerakhir) {
+              acc.alpha++;
             }
             return acc;
           },
-          { hadir: 0, telat: 0 }
+          { hadir: 0, izin: 0, alpha: 0 }
         );
 
         return {
@@ -81,7 +86,8 @@ class Absensi {
           nama: detail.nama,
           nim: detail.nim,
           hadir: counts.hadir,
-          telat: counts.telat,
+          alpha: counts.alpha,
+          izin: counts.izin,
         };
       })
     );
