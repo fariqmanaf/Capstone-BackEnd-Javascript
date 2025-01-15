@@ -136,6 +136,7 @@ class Logbook {
     const detailLogbook = await prisma.detailLogbook.findMany({
       where: {
         logbookId: logbookId,
+        user_id: userId
       },
     });
     return detailLogbook;

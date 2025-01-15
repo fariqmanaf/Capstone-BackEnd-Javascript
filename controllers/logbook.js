@@ -194,7 +194,8 @@ module.exports = {
 
   getLogbookById : async (req, res, next) => {
     const logbookId = req.params.id;
-    const data = await Logbook.getLogbookById(logbookId);
+    const userId = req.user.id;
+    const data = await Logbook.getLogbookById(logbookId, userId);
     if (!data) {
       return res.status(404).json({
         status: "Failed",
