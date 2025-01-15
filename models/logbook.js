@@ -11,7 +11,6 @@ class Logbook {
         progress: true,
         tglTerakhir: true,
         tglDibuka: true,
-        izin: true,
       },
     });
     return logbook;
@@ -56,6 +55,7 @@ class Logbook {
           output: true,
           rincianKegiatan: true,
           buktiKegiatan: true,
+          izin: true,
           user: {
             select: {
               name: true,
